@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name         智慧职教mooc
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @name         mooc
+// @namespace    https://github.com/NotFaceGUI
+// @version      0.2
 // @description  简单的刷课软件
-// @author       NotFaceGUI
 // @match        https://mooc.icve.com.cn/study/workExam/*
-// @icon         https://www.google.com/s2/favicons?domain=icve.com.cn
 // @require      https://code.jquery.com/jquery-3.1.1.min.js
+// @updateURL    https://github.com/NotFaceGUI/script/blob/main/tampermonkey/mooc.js
+// @downloadURL  https://github.com/NotFaceGUI/script/blob/main/tampermonkey/mooc.js
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -32,6 +32,9 @@
     // 全局答案数组
     let answerGlobal = [];
 
+    // 完成标记
+    let flag = false;
+
     // 页面加载完成执行
     $(document).ready(function () {
         url = url.substring(url.lastIndexOf('/') + 1);
@@ -45,23 +48,6 @@
                 if (itemArr.length != 0) {
                     clearInterval(b);
 
-                    // 遍历当前页面的数据
-                    // itemArr.each((index, item) => {
-                    //     // 如果没有做则跳转到当前页面内
-                    //     if ($(".np-hw-li .np-hw-score")[index].innerText == "未做") {
-                    //         // 执行代码
-                    //         $(".np-hw-control a")[index].click()
-
-                    //     } else {
-                    //         // 当做了则记录值下次直接从当前值开始遍历
-                    //         GM_setValue('index', index);
-                    //     }
-                    // })
-
-                    // let index = GM_getValue('key');
-                    // if (index === undefined) {
-                    //     index = 0;
-                    // }
                     let index = 0
                     for (let i = 0; i < itemArr.length; i++) {
                         // 如果没有做则跳转到当前页面内
@@ -78,26 +64,16 @@
                         getworkExamId();
 
                         if (workExamType != 1) {
-                            window.location.replace("https://mooc.icve.com.cn/study/workExam/testWork/testWork.html?workExamType=1&courseOpenId=4ljtabatvkjjmrkllppccg#pageSize=5000&page=1");
+                            window.location.replace(`https://mooc.icve.com.cn/study/workExam/testWork/testWork.html?workExamType=1&courseOpenId=${courseOpenId}#pageSize=5000&page=1`);
                         } else {
-                            window.location.replace("https://mooc.icve.com.cn/study/workExam/homeWork/homeWork.html?workExamType=0&courseOpenId=4ljtabatvkjjmrkllppccg#pageSize=5000&page=1");
+                            window.location.replace(`https://mooc.icve.com.cn/study/workExam/homeWork/homeWork.html?workExamType=0&courseOpenId=${courseOpenId}#pageSize=5000&page=1`);
                         }
                     }
 
-                    // for (let i = 0; i < itemArr.length; i++) {
-                    //     // 如果没有做则跳转到当前页面内
-                    //     if ($(".np-hw-li .np-hw-score")[i].innerText == "未做") {
-                    //         // 执行代码
-                    //         console.log($(".np-hw-control a")[i]);
-
-                    //     }
-                    // }
 
                 }
             }, 500);
         }
-
-
 
         // 进入选择
         if (url === "detail.html") {
@@ -131,10 +107,7 @@
                 }
 
             }, 200)
-
         }
-
-
     });
 
     function getWorkExamAnswer() {
@@ -142,17 +115,13 @@
         GM_xmlhttpRequest({
             method: "post",
             url: 'https://mooc.icve.com.cn/study/workExam/workExamPreview',
-            // url: 'https://mooc.icve.com.cn/study/workExam/history',
-            // data: 'courseOpenId=4ljtabatvkjjmrkllppccg&workExamId=frttabatppj0bmt2qe7nq&studentWorkId=eenbaqoukjdwzpdqqdsda&workExamType=1',
             data: `courseOpenId=${courseOpenId}&workExamId=${workExamId}&workExamType=${workExamType}`,
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             onload: function (res) {
-                // console.log(res.response)
                 let json = JSON.parse(res.response);
                 answer = JSON.parse(json.workExamData).questions;
-                // clearInterval(a)
             },
             onerror: function (err) {
                 console.log('error')
@@ -166,7 +135,6 @@
     /**
      * @param {Array} answer
      * 处理答案，返回简化的数据
-     * 
      */
     function treatmentAnswer(answer) {
         // 存放答案下标的数组
@@ -179,8 +147,6 @@
 
         });
     }
-
-    let flag = false;
 
     function getAnswer() {
         if (workExamId !== "") {
@@ -205,7 +171,6 @@
                     flag = true;
                 }
             }, 200)
-
         }
     }
 
