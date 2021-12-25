@@ -5,8 +5,7 @@
 // @description  简单的刷课软件
 // @match        https://mooc.icve.com.cn/study/workExam/*
 // @require      https://code.jquery.com/jquery-3.1.1.min.js
-// @updateURL    https://github.com/NotFaceGUI/script/blob/main/tampermonkey/mooc.js
-// @downloadURL  https://github.com/NotFaceGUI/script/blob/main/tampermonkey/mooc.js
+// @updateURL    https://raw.githubusercontent.com/NotFaceGUI/script/main/tampermonkey/mooc.user.js
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
